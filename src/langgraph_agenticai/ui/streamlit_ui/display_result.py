@@ -22,6 +22,7 @@ class DisplayResultStreamlit:
                             st.write(user_message)
                         with st.chat_message("assistant"):
                             st.write(value["messages"].content)
+                            
         elif usecase == "Chatbot with Tools":
             # Prepare state and invoke the graph
             initial_state = {"messages": [user_message]}
@@ -64,3 +65,34 @@ class DisplayResultStreamlit:
                         mime="text/markdown"
                     )
                 st.success(f"✅ Summary saved to {AI_NEWS_PATH}")
+
+        elif usecase == "Blog Generator":
+            topic = self.user_message
+            with st.spinner("Generating blog... ⏳"):
+                try:
+                    # Invoke the graph with topic
+                    result = graph.invoke({"topic": topic})
+
+                    # Get the saved Markdown file path from state
+                    blog_md_path = f"./BlogGeneration/{topic.replace(' ', '_')}_blog.md"
+
+                    # Read the Markdown content
+                    with open(blog_md_path, 'r', encoding='utf-8') as f:
+                        blog_content = f.read()
+
+                    # Display results in a styled container
+                    st.subheader("📝 Generated Blog")
+                    st.markdown(blog_content, unsafe_allow_html=True)
+
+                    # Download button
+                    st.download_button(
+                        label="💾 Download Blog",
+                        data=blog_content,
+                        file_name=blog_md_path.split("/")[-1],
+                        mime="text/markdown"
+                    )
+                    st.success(f"✅ Blog saved to {blog_md_path}")
+                except FileNotFoundError:
+                    st.error(f"Blog file not found: {blog_md_path}")
+                except Exception as e:
+                    st.error(f"An error occurred: {e}")

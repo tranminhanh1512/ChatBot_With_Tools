@@ -54,4 +54,7 @@ class LoadStreamlitUI:
                 else:
                     st.session_state.IsFetchButtonClicked = False
             
+            if self.user_controls["selected_usecase"] == "Blog Generator":
+                st.subheader("📝 Blog Generator")
+
         return self.user_controls

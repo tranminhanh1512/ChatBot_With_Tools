@@ -9,3 +9,7 @@ streamlit
 tavily-python
 arxiv
 wikipedia
+uv
+uvicorn
+watchdog
+langchain-cli[inmem]

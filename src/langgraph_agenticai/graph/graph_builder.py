@@ -1,16 +1,18 @@
 from langgraph.graph import StateGraph
 from langgraph.graph import START,END
-from src.langgraph_agenticai.state.state import State
+from src.langgraph_agenticai.state.state import State, Blog, BlogState
 from src.langgraph_agenticai.nodes.basic_chat_node import BasicChatbotNode
 from src.langgraph_agenticai.tools.search_tool import get_tools, create_tool_node
 from src.langgraph_agenticai.nodes.chatbot_with_tools_node import ChatbotWithToolsNode
 from src.langgraph_agenticai.nodes.ai_news_node import AINewsNode
+from src.langgraph_agenticai.nodes.blog_generator_node import BlogNode
 from langgraph.prebuilt import ToolNode, tools_condition
 
 class GraphBuilder:
     def __init__(self, model):
         self.llm = model
         self.graph_builder = StateGraph(State)
+        self.blog_graph = StateGraph(BlogState)
 
     def basic_chatbot_build_graph(self):
         """
@@ -72,6 +74,22 @@ class GraphBuilder:
         self.graph_builder.add_edge("summarize_news", "save_result")
         self.graph_builder.add_edge("save_result", END)
 
+    def build_topic_graph(self):
+        """
+        Builds a topic graph for blog creation using LangGraph.
+        """
+        blog_obj_node = BlogNode(self.llm)
+        # Define the topic node
+        self.blog_graph.add_node("title_creation",blog_obj_node.title_creation)
+        self.blog_graph.add_node("content_creation", blog_obj_node.content_generation)
+        self.blog_graph.add_node("save_result", blog_obj_node.save_result)
+
+        # Add edges
+        self.blog_graph.add_edge(START, "title_creation")
+        self.blog_graph.add_edge("title_creation", "content_creation")
+        self.blog_graph.add_edge("content_creation", "save_result")
+        self.blog_graph.add_edge("save_result", END)
+
     def setup_graph(self, usecase: str):
         """
         Sets up the graph based on the provided use case.
@@ -84,5 +102,9 @@ class GraphBuilder:
 
         if usecase == "AI News":
             self.ai_news_builder_graph()
+        
+        if usecase == "Blog Generator":
+            self.build_topic_graph()
+            return self.blog_graph.compile()
             
         return self.graph_builder.compile()
