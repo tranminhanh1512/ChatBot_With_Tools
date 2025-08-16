@@ -19,7 +19,7 @@ This project is a Streamlit web application that combines multiple AI tools into
 - 🗨️ Basic Chatbot – converse naturally with an AI assistant for general questions or casual interactions.
 - 🔍 Chatbot with Web Search Tools – augment AI responses with real-time information from web search, enabling fact-based answers.
 - 📰 AI News Summarizer – fetch and summarize the latest AI news, presenting concise and structured summaries in Markdown format.
-- ️ Blog Generation – generate creative and SEO-friendly blog content based on user-provided topics, fully formatted in Markdown.
+- ️📑 Blog Generation – generate creative and SEO-friendly blog content based on user-provided topics, fully formatted in Markdown.
 
 The application leverages LangGraph to orchestrate complex workflows, managing both the flow of conversation and interactions with external tools. This modular design allows for:
 
